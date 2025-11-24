@@ -1,0 +1,43 @@
+export type RootStackParamList = {
+  // screen Name : parameter
+  Signup: undefined;
+  Signin: undefined;
+  Home: undefined;
+  Loading: undefined;
+  Chat: {userIds: string[]; other: User};
+};
+
+export interface User {
+  userId: string;
+  email: string;
+  name: string;
+  profileUrl?: string;
+}
+
+// firebase storage
+export enum Collections {
+  USERS = 'users',
+  CHATS = 'chats',
+  MESSAGES = 'messages',
+}
+
+export interface Chat {
+  id: string;
+  userIds: string[];
+  users: User[];
+}
+
+export interface Message {
+  id: string;
+  user: User;
+  text: string | null;
+  imgaeUrl: string | null;
+  audioUrl: string | null;
+  createdAt: Date;
+}
+
+export interface FirestoreMessageData {
+  text: string;
+  user: User;
+  createdAt: Date;
+}

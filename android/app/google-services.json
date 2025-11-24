@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "788628652817",
+    "project_id": "chatapp-4c91f",
+    "storage_bucket": "chatapp-4c91f.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:788628652817:android:6ad3eea2d44a07342082b0",
+        "android_client_info": {
+          "package_name": "com.mihyun.chatapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDzmwHKTPXJJJx4SH2mFbQ1tLXVrdboK74"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
