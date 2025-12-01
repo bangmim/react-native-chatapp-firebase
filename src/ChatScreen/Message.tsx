@@ -4,16 +4,23 @@ import {StyleSheet, Text, View} from 'react-native';
 import Colors from '../modules/Colors';
 import UserPhoto from '../components/UserPhoto';
 import ImageMessage from './ImageMessage';
+import AudioMessage from './AudioMessage';
 
 interface TextMessage {
   text: string;
 }
-interface ImageMessage {
+interface ImageMessageContent {
   url: string;
 }
+interface AudioMessageContent {
+  audioUrl: string;
+}
+
+type ChatMessage = TextMessage | ImageMessageContent | AudioMessageContent;
+
 interface MessageProps {
   name: string;
-  message: TextMessage | ImageMessage;
+  message: ChatMessage;
   createdAt: Date;
   isOtherMessage: boolean;
   userImageUrl?: string;
@@ -80,6 +87,10 @@ const Message = ({
     if ('url' in message) {
       return <ImageMessage url={message.url} />;
     }
+    if ('audioUrl' in message) {
+      return <AudioMessage url={message.audioUrl} />;
+    }
+    return null;
   }, [message, messageStyles.messageText]);
 
   const renderMessageContainer = useCallback(() => {

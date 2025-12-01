@@ -229,6 +229,14 @@ const ChatScreen = () => {
                 <Message {...commonProps} message={{url: message.imageUrl}} />
               );
             }
+            if (message.audioUrl !== null) {
+              return (
+                <Message
+                  {...commonProps}
+                  message={{audioUrl: message.audioUrl}}
+                />
+              );
+            }
             return null;
           }}
           ItemSeparatorComponent={() => (

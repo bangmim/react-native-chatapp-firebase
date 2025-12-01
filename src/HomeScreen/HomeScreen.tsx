@@ -68,6 +68,7 @@ const HomeScreen = () => {
   const {user: me, updateProfileImage} = useContext(AuthContext);
   const [loadingUsers, setLoadingUsers] = useState(false);
   const [users, setUsers] = useState<User[]>([]);
+
   const {navigate} =
     useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const onPressLogout = useCallback(() => {
