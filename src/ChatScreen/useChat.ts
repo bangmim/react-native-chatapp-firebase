@@ -92,7 +92,7 @@ const useChat = (userIds: string[]) => {
           {
             id: doc.id,
             text: text,
-            imgaeUrl: null,
+            imageUrl: null,
             audioUrl: null,
             user: user,
             createdAt: new Date(), // 로컬에서는 유저의 시간으로 (db에서 사용되는 시간을 가져올 수 없다)
@@ -129,7 +129,8 @@ const useChat = (userIds: string[]) => {
             const newMessage: Message = {
               id: doc.id,
               text: docData.text ?? null,
-              imgaeUrl: docData.imgaeUrl ?? null,
+              // 과거 필드명(imgaeUrl)과 새 필드명(imageUrl)을 모두 지원
+              imageUrl: docData.imageUrl ?? docData.imgaeUrl ?? null,
               audioUrl: docData.audioUrl ?? null,
               user: docData.user,
               createdAt: docData.createdAt.toDate(),
@@ -219,6 +220,8 @@ const useChat = (userIds: string[]) => {
           .doc(chat.id)
           .collection(Collections.MESSAGES)
           .add({
+            // 새 필드명(imageUrl)을 기본으로 사용하고, 과거 필드명(imgaeUrl)도 함께 기록
+            imageUrl: url,
             imgaeUrl: url,
             user: user,
             createdAt: firestore.FieldValue.serverTimestamp(),
@@ -227,7 +230,7 @@ const useChat = (userIds: string[]) => {
           {
             id: doc.id,
             text: null,
-            imgaeUrl: url,
+            imageUrl: url,
             audioUrl: null,
             user: user,
             createdAt: new Date(),
@@ -271,7 +274,7 @@ const useChat = (userIds: string[]) => {
           {
             id: doc.id,
             text: null,
-            imgaeUrl: null,
+            imageUrl: null,
             audioUrl: url,
             user: user,
             createdAt: new Date(),

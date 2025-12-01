@@ -2,11 +2,18 @@ import {faMicrophone, faStop} from '@fortawesome/free-solid-svg-icons';
 import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
 import React, {useCallback, useRef, useState} from 'react';
 
-import {StyleSheet, TouchableOpacity} from 'react-native';
+import {
+  Alert,
+  PermissionsAndroid,
+  Platform,
+  StyleSheet,
+  TouchableOpacity,
+} from 'react-native';
 import AudioRecorderPlayer, {
   AudioEncoderAndroidType,
   AVEncodingOption,
 } from 'react-native-audio-recorder-player';
+import {PERMISSIONS, RESULTS, request} from 'react-native-permissions';
 import Colors from '../modules/Colors';
 
 const styles = StyleSheet.create({
@@ -30,27 +37,34 @@ const MicButton = ({onRecorded}: MicButtonProps) => {
   const audioRecorderPlayerRef = useRef(new AudioRecorderPlayer());
 
   const startRecord = useCallback(async () => {
-    // if (Platform.OS === 'android') {
-    //   const writeStatus = await request(
-    //     PERMISSIONS.ANDROID.WRITE_EXTERNAL_STORAGE,
-    //   );
-    //   const readStatus = await request(
-    //     PERMISSIONS.ANDROID.READ_EXTERNAL_STORAGE,
-    //   );
-    //   const grants = await PermissionsAndroid.request(
-    //     PermissionsAndroid.PERMISSIONS.RECORD_AUDIO,
-    //   );
+    // Android / iOS 모두에서 녹음 권한을 먼저 요청합니다.
+    if (Platform.OS === 'android') {
+      const audioStatus = await PermissionsAndroid.request(
+        PermissionsAndroid.PERMISSIONS.RECORD_AUDIO,
+      );
 
-    //   const granted =
-    //     grants === PermissionsAndroid.RESULTS.GRANTED &&
-    //     writeStatus === RESULTS.GRANTED &&
-    //     readStatus === RESULTS.GRANTED;
-    //   console.log('writeStatus :', writeStatus);
-    //   console.log('readStatus :', readStatus);
-    //   if (!granted) {
-    //     return;
-    //   }
-    // }
+      const granted = audioStatus === PermissionsAndroid.RESULTS.GRANTED;
+      if (!granted) {
+        Alert.alert(
+          '마이크 권한 필요',
+          '음성 메시지를 보내려면 마이크 권한이 필요합니다.\n설정 > 앱 > 권한에서 마이크를 허용해 주세요.',
+        );
+        // 권한이 없으면 녹음을 시작하지 않습니다.
+        return;
+      }
+    } else {
+      const microphoneStatus = await request(PERMISSIONS.IOS.MICROPHONE);
+
+      if (microphoneStatus !== RESULTS.GRANTED) {
+        Alert.alert(
+          '마이크 권한 필요',
+          '음성 메시지를 보내려면 마이크 권한이 필요합니다.\n설정 앱에서 마이크 권한을 허용해 주세요.',
+        );
+        // 권한이 없으면 녹음을 시작하지 않습니다.
+        return;
+      }
+    }
+
     await audioRecorderPlayerRef.current.startRecorder(undefined, {
       AudioEncoderAndroid: AudioEncoderAndroidType.AAC,
       AVFormatIDKeyIOS: AVEncodingOption.aac,

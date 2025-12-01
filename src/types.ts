@@ -31,7 +31,7 @@ export interface Message {
   id: string;
   user: User;
   text: string | null;
-  imgaeUrl: string | null;
+  imageUrl: string | null;
   audioUrl: string | null;
   createdAt: Date;
 }

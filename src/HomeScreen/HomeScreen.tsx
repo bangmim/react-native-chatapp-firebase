@@ -3,6 +3,7 @@ import Screen from '../components/Screen';
 import AuthContext from '../components/AuthContext';
 import {
   ActivityIndicator,
+  Alert,
   FlatList,
   StyleSheet,
   Text,
@@ -99,13 +100,25 @@ const HomeScreen = () => {
     [],
   );
   const onPressProfile = useCallback(async () => {
-    //이미지 선택
-    const image = await ImageCropPicker.openPicker({
-      cropping: true,
-      cropperCircleOverlay: true,
-    });
-    console.log('image :', image);
-    await updateProfileImage(image.path);
+    try {
+      //이미지 선택
+      const image = await ImageCropPicker.openPicker({
+        cropping: true,
+        cropperCircleOverlay: true,
+      });
+      console.log('image :', image);
+      await updateProfileImage(image.path);
+    } catch (error: any) {
+      // 사용자가 단순 취소한 경우는 무시
+      if (error?.code === 'E_PICKER_CANCELLED') {
+        return;
+      }
+      // 권한 거절 또는 기타 오류에 대한 안내
+      Alert.alert(
+        '사진 접근 권한 필요',
+        '프로필 이미지를 변경하려면 사진/갤러리 접근 권한이 필요합니다.\n설정에서 권한을 확인해 주세요.',
+      );
+    }
   }, [updateProfileImage]);
 
   if (me == null) {

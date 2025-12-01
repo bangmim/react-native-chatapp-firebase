@@ -140,8 +140,18 @@ const ChatScreen = () => {
   }, [me, sendMessage, text]);
   const onPressImageButton = useCallback(async () => {
     if (me != null) {
-      const image = await ImageCropPicker.openPicker({cropping: true});
-      sendImageMessage(image.path, me);
+      try {
+        const image = await ImageCropPicker.openPicker({cropping: true});
+        sendImageMessage(image.path, me);
+      } catch (error: any) {
+        if (error?.code === 'E_PICKER_CANCELLED') {
+          return;
+        }
+        Alert.alert(
+          '사진 접근 권한 필요',
+          '이미지 메시지를 보내려면 사진/갤러리 접근 권한이 필요합니다.\n설정에서 권한을 확인해 주세요.',
+        );
+      }
     }
   }, [sendImageMessage, me]);
 
@@ -214,9 +224,9 @@ const ChatScreen = () => {
                 <Message {...commonProps} message={{text: message.text}} />
               );
             }
-            if (message.imgaeUrl !== null) {
+            if (message.imageUrl !== null) {
               return (
-                <Message {...commonProps} message={{url: message.imgaeUrl}} />
+                <Message {...commonProps} message={{url: message.imageUrl}} />
               );
             }
             return null;
