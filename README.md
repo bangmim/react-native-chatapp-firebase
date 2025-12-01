@@ -2,7 +2,9 @@
 
 텍스트, 이미지, 음성 메시지를 전송할 수 있는 **실시간 1:1 채팅 앱**입니다.  
 Firebase( Authentication · Firestore · Storage )를 기반으로 **별도 서버 없이** 구현한 모바일 메신저 프로젝트입니다.
-
+## 구현 영상 (Preview)
+| <img src="assets/preview.gif" width="300" /> |
+[![YouTube](https://img.shields.io/badge/YouTube-FF0000?style=for-the-badge&logo=youtube&logoColor=white)](https://youtu.be/cbqwafX-eoA)
 ---
 
 ## 주요 기능 (Features)
