@@ -117,8 +117,9 @@ const useChat = (userIds: string[]) => {
       .collection(Collections.MESSAGES)
       .orderBy('createdAt', 'desc')
       .onSnapshot(snapshot => {
-        if (snapshot.metadata.hasPendingWrites) {
-          return null;
+        // snapshot 이 null 이 될 수 있으므로 방어 코드 추가
+        if (!snapshot || snapshot.metadata?.hasPendingWrites) {
+          return;
         }
         const newMessages = snapshot
           .docChanges()
@@ -126,6 +127,10 @@ const useChat = (userIds: string[]) => {
           .map(docChange => {
             const {doc} = docChange;
             const docData = doc.data();
+            const createdAt =
+              docData.createdAt?.toDate != null
+                ? docData.createdAt.toDate()
+                : new Date();
             const newMessage: Message = {
               id: doc.id,
               text: docData.text ?? null,
@@ -133,7 +138,7 @@ const useChat = (userIds: string[]) => {
               imageUrl: docData.imageUrl ?? docData.imgaeUrl ?? null,
               audioUrl: docData.audioUrl ?? null,
               user: docData.user,
-              createdAt: docData.createdAt.toDate(),
+              createdAt,
             };
             return newMessage;
           });
@@ -174,14 +179,15 @@ const useChat = (userIds: string[]) => {
       .collection(Collections.CHATS)
       .doc(chat.id)
       .onSnapshot(snapshot => {
-        if (snapshot.metadata.hasPendingWrites) {
-          // 로컬 변경 되었을 때에는 업데이트 무시
+        if (!snapshot || snapshot.metadata?.hasPendingWrites) {
+          // 로컬 변경 되었을 때 또는 snapshot 이 없는 경우에는 업데이트 무시
           return;
         }
         const chatData = snapshot.data() ?? {}; //data가 null일 수도 있으므로
-        const userToMessageReadTimestamp = chatData.userToMessageReadAt as {
-          [userId: string]: FirebaseFirestoreTypes.Timestamp;
-        };
+        const userToMessageReadTimestamp =
+          (chatData.userToMessageReadAt as {
+            [userId: string]: FirebaseFirestoreTypes.Timestamp;
+          }) ?? {};
 
         const userToMessageReadDate = _.mapValues(
           // mapValue : 오브젝트에서 value에 해당되는 것을 return 및 변경할 수 있게 해준다

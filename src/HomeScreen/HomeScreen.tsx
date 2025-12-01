@@ -74,23 +74,25 @@ const HomeScreen = () => {
   const onPressLogout = useCallback(() => {
     auth().signOut();
   }, []);
-  const loadUsers = useCallback(async () => {
-    setLoadingUsers(true);
-    try {
-      const snapshot = await firestore().collection(Collections.USERS).get();
-      setUsers(
-        snapshot.docs
-          .map(doc => doc.data() as User)
-          .filter(u => u.userId !== me?.userId),
-      );
-    } finally {
-      setLoadingUsers(false);
-    }
-  }, [me?.userId]);
 
+  // Firestore users 컬렉션을 실시간으로 구독해서
+  // 새로운 유저가 추가되거나 변경되면 홈 화면이 자동으로 갱신되도록 한다.
   useEffect(() => {
-    loadUsers();
-  }, [loadUsers]);
+    setLoadingUsers(true);
+    const unsubscribe = firestore()
+      .collection(Collections.USERS)
+      .onSnapshot(snapshot => {
+        const nextUsers = snapshot.docs
+          .map(doc => doc.data() as User)
+          .filter(u => u.userId !== me?.userId);
+        setUsers(nextUsers);
+        setLoadingUsers(false);
+      });
+
+    return () => {
+      unsubscribe();
+    };
+  }, [me?.userId]);
 
   const renderLoading = useCallback(
     () => (
